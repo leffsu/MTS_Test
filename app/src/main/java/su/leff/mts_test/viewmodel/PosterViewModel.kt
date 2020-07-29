@@ -2,7 +2,8 @@ package su.leff.mts_test.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.GlobalScope
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,7 +30,7 @@ class PosterViewModel : ViewModel() {
                 call: Call<List<PosterResponse>>,
                 response: Response<List<PosterResponse>>
             ) {
-                GlobalScope.launch {
+                viewModelScope.launch(Dispatchers.IO){
                     response.body()?.let { films ->
                         val filmsList = ArrayList<Poster>()
                         films.forEach { filmsList.add(Poster(it.id, it.year, it.poster)) }
@@ -46,13 +47,13 @@ class PosterViewModel : ViewModel() {
     }
 
     fun resetFilter() {
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO){
             filmsToShow.postValue(allFilms.value)
         }
     }
 
     fun filterByYear(year: Int) {
-        GlobalScope.launch {
+        viewModelScope.launch(Dispatchers.IO){
             allFilms.value?.let { films ->
                 filmsToShow.postValue(films.filter { it.year == year })
             }
